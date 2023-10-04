@@ -52,5 +52,6 @@
     "typescript": "~4.7.2",
     "grunt": "1.0.3",
     "grunt-war": "0.5.1"
-  }
+  },
+  "repository": "https://github.com/PSMRI/ECD-UI.git"
 }
