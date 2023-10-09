@@ -19,8 +19,6 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-
-
 import { Component, HostListener, Inject, OnInit, Renderer2 } from '@angular/core';
 import { ConfirmationService } from '../../services/confirmation/confirmation.service';
 import { LoginserviceService } from '../../services/loginservice/loginservice.service';
@@ -31,7 +29,7 @@ import { environment } from 'src/environments/environment';
 import { CtiService } from '../../services/cti/cti.service';
 import { DOCUMENT } from '@angular/common';
 import * as moment from 'moment';
-import * as CryptoJS from 'crypto-js';
+import * as bcrypt from 'bcryptjs'; // Import bcrypt
 
 @Component({
   selector: 'app-login',
@@ -54,8 +52,6 @@ export class LoginComponent implements OnInit {
   encPassword: any;
   _keySize: any;
   _ivSize: any;
-  _iterationCount: any;
-
 
   constructor(
     private fb: FormBuilder,
@@ -69,22 +65,18 @@ export class LoginComponent implements OnInit {
   ) {
     this._keySize = 256;
     this._ivSize = 128;
-    this._iterationCount = 10000;
-
   }
 
   ngOnInit(): void {
     if(sessionStorage.getItem("isAuthenticated") == "true"){
       this.router.navigate(['/role-selection']);
     } else {
-    console.log(this.router.url)
-    if(this.router.url=='/login'){
-      this.renderer.addClass(this.document.body, 'test');
+      console.log(this.router.url)
+      if(this.router.url=='/login'){
+        this.renderer.addClass(this.document.body, 'test');
+      }
     }
-  }
-    /**
-     * Fetching language set
-     */
+
     this.setLanguageService
       .getLanguageData(environment.language)
       .subscribe((data) => {
@@ -92,11 +84,12 @@ export class LoginComponent implements OnInit {
         this.currentLanguageSet = data;
       });
   }
+
   ngOnDestroy(): void {
     this.renderer.removeClass(this.document.body, 'test');
-}
+  }
 
- get keySize() {
+  get keySize() {
     return this._keySize;
   }
 
@@ -104,29 +97,21 @@ export class LoginComponent implements OnInit {
     this._keySize = value;
   }
 
-
-
   get iterationCount() {
     return this._iterationCount;
   }
 
-
-
   set iterationCount(value) {
     this._iterationCount = value;
   }
-
-
 
   generateKey(salt:any, passPhrase:any) {
     return CryptoJS.PBKDF2(passPhrase, CryptoJS.enc.Hex.parse(salt), {
       hasher: CryptoJS.algo.SHA512,
       keySize: this.keySize / 32,
       iterations: this._iterationCount
-    })
+    });
   }
-
-
 
   encryptWithIvSalt(salt:any, iv:any, passPhrase:any, plainText:any) {
     let key = this.generateKey(salt, passPhrase);
@@ -143,17 +128,13 @@ export class LoginComponent implements OnInit {
     return salt + iv + ciphertext;
   }
 
+  encrypt(passPhrase: any, plainText: any) {
+    const salt = bcrypt.genSaltSync(10);  // Generate a salt
+    return bcrypt.hashSync(plainText, salt);  // Hash the plain text with the salt
+  }
 
-  loginForm = this.fb.group({
-    userName: [''],
-    password: [''],
-  });
-
-  /**
-   * Calling user authentication API
-   */
   public onSubmit(): void {
-   let encryptedPwd = this.encrypt(this.Key_IV, this.loginForm.controls.password.value)
+    let encryptedPwd = this.encrypt(this.Key_IV, this.loginForm.controls.password.value)
     let reqObj = {
       userName: this.loginForm.controls.userName.value,
       password: encryptedPwd,
@@ -185,11 +166,13 @@ export class LoginComponent implements OnInit {
       },
       (err: any) => {
         if(err && err.error)
-        this.confirmationService.openDialog(err.error, 'error');
+          this.confirmationService.openDialog(err.error, 'error');
         else
-        this.confirmationService.openDialog(err.title + err.detail, 'error')
-        });
+          this.confirmationService.openDialog(err.title + err.detail, 'error');
+      });
   }
+
+
 
   /**
    *
