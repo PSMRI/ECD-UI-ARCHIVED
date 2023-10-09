@@ -33,9 +33,6 @@ import { DOCUMENT } from '@angular/common';
 import * as moment from 'moment';
 import * as CryptoJS from 'crypto-js';
 
-/**
- * DE40034072 - 12-01-2022
- */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -71,8 +68,8 @@ export class LoginComponent implements OnInit {
     private renderer: Renderer2,
   ) {
     this._keySize = 256;
-      this._ivSize = 128;
-      this._iterationCount = 1989;
+    this._ivSize = 128;
+    this._iterationCount = 10000;
 
   }
 
