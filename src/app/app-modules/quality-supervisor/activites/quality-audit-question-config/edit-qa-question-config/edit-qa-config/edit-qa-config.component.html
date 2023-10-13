@@ -10,7 +10,7 @@
         style="margin-top: 10px"
       >
       <div
-      class="col-xs-12 col-lg-12"
+      class="col-xs-12 col-lg-12 row"
       style="margin-top: 20px;margin-bottom: 20px;"
     >
       <mat-form-field
@@ -54,6 +54,7 @@
       <mat-error *ngIf="editQualityAuditorQuestionnaireForm.controls['question'].hasError('whitespace')">Please enter valid data</mat-error>            
 
       </mat-form-field>
+      <mat-checkbox formControlName="isFatalQues" class="fontStyle" (change)="onClickOfFatalQues($event)">{{currentLanguageSet?.isFatalQues}}</mat-checkbox>
       </div>
 
       <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
@@ -147,7 +148,7 @@
           <mat-form-field 
           appearance="outline"
           [style.width]="'100%'" 
-          style="margin-left: 35px;"
+          style="margin-left: 65px;"
           class="backgroundWhite fieldAlignment fontStyle">
             <mat-label class="fontStyle">{{ currentLanguageSet?.score }}</mat-label>
             <input

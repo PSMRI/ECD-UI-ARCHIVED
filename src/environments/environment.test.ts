@@ -24,14 +24,14 @@
 const ecdIP = 'http://10.208.122.22:8080/';
 const commonIP = 'http://10.208.122.38:8080/';
 const adminIP = 'http://10.208.122.38:8080/';
-const IOT_API = 'http://localhost:8085/ezdx-hub-connect-srv';
-const COMMON_API = `${commonIP}commonapi-v1.0/`;
-const ADMIN_API = `${adminIP}adminapi-v1.0/`;
+const COMMON_API = `${commonIP}commonapi-v1.1/`;
+const ADMIN_API = `${adminIP}adminapi-v1.1/`;
 const ECD_API = `${ecdIP}ecdapi/`;
+const biologicalScreeningDeviceAPI = `${ADMIN_API}diagnostics/biologicalScreeningDevice`; 
 
 export const environment = {
   production: true,
-  ioturl: `${IOT_API}`,
+  ioturl: `${biologicalScreeningDeviceAPI}`,
   extendSessionUrl: `${ECD_API}common/extend/redisSession`,
   language: 'English',
   licenseUrl: `${COMMON_API}license.html`,
@@ -65,6 +65,10 @@ export const environment = {
   getDataUploadURL: `${ECD_API}uploadRCHData`,
   getUploadTemplateURL: `${ECD_API}dataTemplate/uploadTemplate`,
   getDownloadTemplateURL: `${ECD_API}dataTemplate/downloadTemplate`,
+  createParentChildMappingURL:`${ECD_API}Questionnaire/createQuestionnairesMap`,
+  getQuestionnairesForMappingURL:`${ECD_API}Questionnaire/getQuestionnaires`,
+  getMappedQuestionsURL:`${ECD_API}Questionnaire/getMappedParentChildQuestionnaire`,
+  updateParentChildMappingURL:`${ECD_API}Questionnaire/editQuestionnairesMap`,
 
 
   // supervisor - section configuration Urls
@@ -73,6 +77,7 @@ export const environment = {
   getNotificationTypeUrl: `${COMMON_API}notification/getNotificationType`,
   createSuprSectionConfigurationUrl: `${ECD_API}Questionnaire/createSections`,
   updateSuprSectionConfigurationUrl: `${ECD_API}Questionnaire/updateSection`,
+  getDateWiseAuditorWorklistUrl:  `${ECD_API}qualityAudit/getQualityAuditorWorklistDatewise`,
 
   getQuestionnaireTypeUrl: `${ECD_API}master/getQuestionnaireType`,
   getAnswerTypeUrl: `${ECD_API}master/getAnswerType`,
@@ -151,6 +156,7 @@ export const environment = {
   getMappedCycleURL:`${ECD_API}sampleSelectionConfiguration/getByPSMId`,
   updateCycleConfigurationURL:`${ECD_API}sampleSelectionConfiguration/update`,
   getAgentMastersUrl:`${ECD_API}master/getAgentsByRoleId`,
+  getCaseSheetDataURL:`${ECD_API}qualityAudit/getBeneficiaryCasesheet`,
   /** Associate-anm-mo Urls */
   getAgentAuditScoreUrl: `${ECD_API}autoPreviewDialing/getRatingsByUserIdAndPsmId`,
   updateCallClosureUrl:`${ECD_API}closure/closeCall`,

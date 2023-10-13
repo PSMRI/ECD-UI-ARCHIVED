@@ -46,12 +46,12 @@ export class StringValidatorDirective {
   decimal = /^\d+(\.\d{0,2})?$/;
   numberslash = /^[0-9/]+$/;
   address = /^[a-zA-Z0-9-./,# ]+$/;
-  appTextarea = /^[a-zA-Z0-9 ]+([a-zA-Z0-9,. ]+)*$/;
+  appTextarea = /^[a-zA-Z0-9]+([,. ][a-zA-Z0-9]+)*$/;
 
   questionnaireValidator = /^[a-zA-Z0-9.,? ]+$/;
   addressValidator = /^[a-zA-Z0-9.,/\-# ]+$/;
   itemNameSearchValidator = /^[a-zA-Z0-9% ]+$/;
-  itemNameMasterValidator = /^[a-zA-Z0-9%-.[\]\/() ]+$/;
+  itemNameMasterValidator = /^[a-zA-Z0-9%\-\.\[\]\/() ]+$/;
   answerValidator = /^[a-zA-Z0-9.,/\- ]+$/;
   usernameValidator = /^[a-zA-Z0-9]+$/;
   lastValue = null;

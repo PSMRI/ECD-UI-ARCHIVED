@@ -37,6 +37,22 @@ mat-checkbox-inner-container-no-side-margin {
   font-weight: 400;
   font-size: 14px;
 }
+.fontStyleRadio {
+  font-family: "Lato", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  padding-right: 10px;
+  padding-left: 8px;
+}
+.fontStyleValid {
+  font-family: "Lato", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  padding-right: 10px;
+  padding-left: 85px;
+}
 
 .full-width {
   height: 40px;

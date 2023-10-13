@@ -47,6 +47,7 @@ export class SectionQuestionnaireMappingComponent implements OnInit {
     'questionType',
     'question',
     'sectionQuestionRank',
+    'role',
     'edit',
     'delete',
   ];
@@ -182,6 +183,7 @@ export class SectionQuestionnaireMappingComponent implements OnInit {
             sectionId: tableValue.sectionid,
             // sectionName: tableValue.sectionName,
             rank: tableValue.sectionQuestionRank,
+            role: tableValue.role,
             createdBy: sessionStorage.getItem('userName'),
             modifiedBy: sessionStorage.getItem('userName'),
             deleted: type === 'activate' ? false : true,
@@ -283,6 +285,7 @@ export interface mapSectionQuestionnaireElement {
   id: number;
   questionid: number;
   sectionQuestionRank: number;
+  role: String;
   questionType: String;
   question: string;
   sectionid: number;

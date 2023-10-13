@@ -36,9 +36,10 @@ export class AssociateAnmMoService {
   selectedBenDetails: any;
   isMother:boolean = false;
   callDetailId: any = null;
-  isStartAutoPreviewDial:any = false;
+  isStartAutoPreviewDial:boolean = false;
   isHighRiskPregnancy: boolean = false;
   isHighRiskInfant: boolean = false;
+  autoDialing:boolean = false;
 
   callWrapup: any="";
   callWrapupFlag = new BehaviorSubject(this.callWrapup);
@@ -72,6 +73,19 @@ export class AssociateAnmMoService {
   isBenRegistartion: any="";
   isBenRegistartionData = new BehaviorSubject(this.isBenRegistartion);
   isBenRegistartionData$ = this.isBenRegistartionData.asObservable();
+
+  resetAgentStatus: any="";
+  resetAgentStatusFlag = new BehaviorSubject(this.resetAgentStatus);
+  resetAgentStatusFlag$ = this.resetAgentStatusFlag.asObservable();
+
+  stopTimer: any="";
+  stopTimerFlag = new BehaviorSubject(this.stopTimer);
+  stopTimerFlag$ = this.stopTimerFlag.asObservable();
+
+  agentCurrentStatus: any="";
+  agentCurrentStatusData = new BehaviorSubject(this.agentCurrentStatus);
+  agentCurrentStatusData$ = this.agentCurrentStatusData.asObservable();
+  
 
   constructor(private http: HttpClient,  private resolver: ComponentFactoryResolver) { }
 
@@ -131,8 +145,8 @@ clearCallClosure()
     return this.http.get(environment.getAgentMasterDataUrl);
   }
 
-  fetchBeneficiaryQuestionnaire(reqObj: any, callType: any){
-    return this.http.get(environment.getBeneficiaryQuestionnaire + reqObj + '/' + callType);
+  fetchBeneficiaryQuestionnaire(reqObj: any, callType: any, role:any){
+    return this.http.get(environment.getBeneficiaryQuestionnaire + reqObj + '/' + callType + '/' + role);
   }
 
   saveQuestionnaireResponse(reqObj: any){
@@ -223,4 +237,30 @@ getBeneficiaryCallHistory(reqObj:any){
 getCallHistoryDetails(reqObj:any){
   return this.http.get(environment.getCallHistoryDetailsUrl + '/' + reqObj);
 }
+
+setResetAgentStatus(value:any) {
+  this.resetAgentStatus = value;
+  this.resetAgentStatusFlag.next(this.resetAgentStatus);
+}
+
+setStopTimer(value: any) {
+  this.stopTimer = value;
+  this.stopTimerFlag.next(this.stopTimer);
+}
+
+clearStopTimer() {
+  this.stopTimer = null;
+  this.stopTimerFlag.next(this.stopTimer);
+}
+
+setAgentState(value:any){
+  this.agentCurrentStatus = value;
+  this.agentCurrentStatusData.next(this.agentCurrentStatus);
+}
+resetAgentState()
+{
+  this.agentCurrentStatus = null;
+  this.agentCurrentStatus.next(this.agentCurrentStatus);
+}
+
 }

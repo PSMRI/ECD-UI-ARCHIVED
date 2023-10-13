@@ -92,6 +92,10 @@ export class ActivityThisWeekComponent implements OnInit {
       screen: 'Map Section Questionnaire',
       value: 'MapSectionQuestionnaire',
     },
+    {
+      screen: 'Map Questionnaire',
+      value: 'MapQuestionnaireConfiguration',
+    },
   ];
 
   activitiesForQualitySupervisor = [

@@ -331,11 +331,6 @@
           aria-label="Select page of Outbound Worklist elements"
         >
         </mat-paginator>
-      <div *ngIf="isAutoPreviewDial && dataSource.data.length > 0" style="float: right;" class="autoDialing">
-        <mat-slide-toggle color="green" (change)="StartAutoPreviewDialing(isChecked)"[(ngModel)]="isChecked" #slide labelPosition="before">
-          <span class="toggleText">{{slide.checked?'End Calling':'Start Calling'}}</span>
-        </mat-slide-toggle>
-      </div>
       <br>
       <div style="visibility: hidden;"><h1>hidden div</h1></div>
       <div style="float: right;  margin-right: -25px;"> <app-czentrix-iframe></app-czentrix-iframe></div>
@@ -351,6 +346,3 @@
 
 
 <!-- Modal -->
-
-
-

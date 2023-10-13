@@ -55,6 +55,7 @@ export class CreateQaQuestionConfigComponent implements OnInit {
   populateQuestionTable: boolean = false;
   isOptionFilled: boolean = false;
   qaQuestionnaireConfigList: any = [];
+  isFatalQues: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -116,6 +117,7 @@ export class CreateQaQuestionConfigComponent implements OnInit {
 
   createQualityAuditorQuestionnaireForm = this.fb.group({
     questionnaire: ['', [Validators.required, this.validateWhitespace]],
+    isFatalQues: false,
     sectionId: [''],
     sectionName: ['', Validators.required],
     rank: ['', Validators.required],
@@ -144,6 +146,12 @@ export class CreateQaQuestionConfigComponent implements OnInit {
 
   get newOption(): FormArray {
     return this.createQualityAuditorQuestionnaireForm.get('newOption') as FormArray;
+  }
+
+  onClickOfFatalQues(event: any) {
+    const isChecked = event.checked;
+    // this.createQualityAuditorQuestionnaireForm.get('isFatalQues')?.setValue(event.checked);
+    this.createQualityAuditorQuestionnaireForm.patchValue({ isFatalQues: isChecked});
   }
 
   back() {
@@ -256,6 +264,7 @@ export class CreateQaQuestionConfigComponent implements OnInit {
       sectionId: addData.sectionId,
       options: options,
       scores: scores,
+      isFatalQues: addData.isFatalQues,
       createdBy: sessionStorage.getItem('userName'),
       psmId: sessionStorage.getItem('providerServiceMapID'),
     };

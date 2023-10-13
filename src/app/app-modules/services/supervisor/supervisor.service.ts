@@ -85,6 +85,9 @@ export class SupervisorService {
   getQuestionnaires(psmId: any) {
     return this.http.get(environment.getQuestionnaireUrl + "/" + psmId);
   }
+  getQuestionnairesForMapping(psmId: any) {
+    return this.http.get(environment.getQuestionnairesForMappingURL + "/" + psmId);
+  }
 
   updateQuestionnaire(reqObj: any) {
     return this.http.post(environment.updateQuestionnaireUrl, reqObj);
@@ -427,5 +430,14 @@ export class SupervisorService {
     }).pipe(map((res:any) => {
       return res;
     }));
+  }
+  createParentChildMapping(reqData:any){
+    return this.http.post(environment.createParentChildMappingURL,reqData)
+  }
+  getMappedQuestions(reqObj:any){
+    return this.http.get(environment.getMappedQuestionsURL + '/' + reqObj.providerServiceMapID);
+  }
+  updateParentChildMapping(reqData:any){
+    return this.http.post(environment.updateParentChildMappingURL,reqData)
   }
 }

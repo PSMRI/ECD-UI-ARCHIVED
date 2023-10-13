@@ -44,6 +44,8 @@ import { SectionQuestionnaireMappingComponent } from '../section-questionnaire-m
 export class CreateSectionQuestionnaireMappingComponent implements OnInit {
   totalRecords = 0;
   currentLanguageSet: any;
+  roles :any = [];
+  roleName: any =[];
   @Input()
   public data: any;
   displayedColumns: string[] = [
@@ -51,6 +53,7 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
     'questionnaireType',
     'questionnaire',
     'rank',
+    'roleType',
     'selected',
   ];
   dataSource = new MatTableDataSource();
@@ -100,11 +103,13 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
     searchTerm: [''],
     questionnaireList: this.fb.array([]),
     quesDupList: this.fb.array([]),
+    roleType: ['']
   });
 
   ngOnInit(): void {
     this.getSelectedLanguage();
     this.getSectionMaster();
+    this.getRolesForQuestionare();
     if (
       this.data.mapSectionQuestionnaireData !== undefined &&
       this.data.mapSectionQuestionnaireData !== null
@@ -214,6 +219,7 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
                   questionnaireId: values.questionnaireId,
                   questionnaireType: values.questionnaireType,
                   questionnaire: values.questionnaire,
+                  roleType: null,
                   selected: null,
                   rank: null,
                 })
@@ -223,6 +229,7 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
                   questionnaireId: values.questionnaireId,
                   questionnaireType: values.questionnaireType,
                   questionnaire: values.questionnaire,
+                  roleType: null,
                   selected: null,
                   rank: null,
                 })
@@ -266,6 +273,7 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
         let selectedItem = {
           questionnaireId: item.questionnaireId,
           rank: item.rank,
+          roles: item.roleType
         };
         this.selectedQuestionnaires.push(selectedItem);
 
@@ -520,12 +528,12 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
   saveSectionQuestionnaireMapping() {
     let reqObj: any = {
       questionIds: this.selectedQuestionnaires,
-
       sectionId: this.sectionQuestionnaireMapForm.controls['sectionid'].value,
       // sectionName:this.sectionQuestionnaireMapForm.controls['sectionName'].value,
       createdBy: sessionStorage.getItem('userName'),
       psmId: sessionStorage.getItem('providerServiceMapID'),
     };
+  
     this.supervisorService.saveQuestionnaireSectionMapping(reqObj).subscribe(
       (response: any) => {
         if (response && response.response) {
@@ -551,8 +559,7 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
         else
         this.confirmationService.openDialog(err.title + err.detail, 'error')
         });
-  
-  }
+}
 
   /**
    * Setting section name
@@ -602,4 +609,17 @@ export class CreateSectionQuestionnaireMappingComponent implements OnInit {
       });
     }
   }
+
+  getRolesForQuestionare(){
+    let  providerServiceMapId = sessionStorage.getItem('providerServiceMapID');
+    this.masterService.getRoleMaster(providerServiceMapId).subscribe((res:any)=>{
+      if(res){
+        res.filter((role: any) => {
+          if(role.roleName.toLowerCase() !== "supervisor" &&role.roleName.toLowerCase() !== "quality auditor" && role.roleName.toLowerCase() !== "quality supervisor" ){
+            this.roles.push(role)
+          }
+        })
+      }
+    })
+   }
 }

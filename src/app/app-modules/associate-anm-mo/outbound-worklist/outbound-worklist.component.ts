@@ -57,10 +57,11 @@ export class OutboundWorklistComponent implements OnInit {
   mappedOutBoundWorkList:any[]=[];
   displayedColumns: string[] = [];
   isChecked = false;
-  autoDialing:boolean=false
   isAutoPreviewDial: boolean = false;
   previewWindowTime: any;
+  agentStatus:any;
   autoPreviewTimeSub: Subscription = new Subscription;
+  autoCallStarted:any=false
   constructor(
     private setLanguageService: SetLanguageService,
     public dialog: MatDialog,
@@ -76,24 +77,30 @@ export class OutboundWorklistComponent implements OnInit {
     this.getSelectedLanguage();
   }
   ngOnInit(): void {
+    this.isAutoPreviewDial = false;
+    this.associateAnmMoService.isStartAutoPreviewDial = false;
     this.getSelectedLanguage();
     this.isChecked = false;
     this.getAutoPreviewDialing();
-
-  
-    this.associateAnmMoService.openCompFlag$.subscribe((responseComp) => {
-      if (responseComp !== null && (responseComp === "Outbound Worklist" || responseComp === "Call Closed")) {
-       this.searchTerm = null;
-       if(this.activeMother === true) {
-        this.selectedRecordAfterFirstDial("mother");
-       }
-       else {
-        this.selectedRecordAfterFirstDial("child");
-       }
+    this.associateAnmMoService.agentCurrentStatusData$.subscribe((response)=>{
+      if( response != undefined){
+        this.agentStatus = response;
+          if((this.agentStatus === "FREE" || this.agentStatus === "READY")  ) {
+          if(this.isAutoPreviewDial && this.associateAnmMoService.isStartAutoPreviewDial  && this.dataSource.data.length > 0 && !this.associateAnmMoService.autoDialing  && sessionStorage.getItem("onCall") === "false" && this.previewWindowTime !== null && this.previewWindowTime !== undefined) {
+          this.isChecked = true;
+          let previewTime = this.previewWindowTime * 1000;
+          
+        this.autoPreviewTimeSub = timer(previewTime).pipe( 
+          map(() => { 
+          this.StartAutoPreviewDialing(true);
+            }) 
+          ).subscribe();
+         
+        }
       }
-      
-  });
-
+      }
+         })
+    // this.associateAnmMoService.resetAgentState();
     
   }
 
@@ -112,13 +119,13 @@ export class OutboundWorklistComponent implements OnInit {
     this.activeMother=true
     this.activeChild=false
     this.dataSource.paginator = this.paginator;
-    this.getOutBoundWorklistCalls();
+    this.getAutoPreviewDialing();
    }
    else{
     this.activeChild=true
     this.activeMother=false
     this.dataSource.paginator = this.paginator
-    this.getOutBoundWorklistCalls();
+    this.getAutoPreviewDialing();
    }
   }
 
@@ -207,9 +214,9 @@ export class OutboundWorklistComponent implements OnInit {
             'action'
           ];
           this.dataSource.paginator = this.paginator;
-          this.dataSource.sort=this.sort;
-          
-        } else {
+          this.dataSource.sort=this.sort;     
+        } 
+        else {
           this.confirmationService.openDialog(response.errorMessage, 'error');
         }
       },
@@ -221,17 +228,7 @@ export class OutboundWorklistComponent implements OnInit {
         });
     }
 
-    if(this.isAutoPreviewDial === true && this.associateAnmMoService.isStartAutoPreviewDial === true && this.dataSource.data.length > 0) {
-      this.isChecked = true;
-      let previewTime = this.previewWindowTime * 1000;
-      
-    this.autoPreviewTimeSub = timer(previewTime).pipe( 
-      map(() => { 
-      this.StartAutoPreviewDialing(true);
-        }) 
-      ).subscribe();
-     
-    }
+   
     
   }
   filterSearchTerm(searchTerm?: string) {
@@ -291,14 +288,44 @@ export class OutboundWorklistComponent implements OnInit {
     this.associateAnmMoService.getAutoPreviewDialing(userId, roleId, psmId).subscribe(
       (response:any) => {
         
+        if(response && response != undefined && response != null){
         this.isAutoPreviewDial = response.isAutoPreviewDial;
         if(this.isAutoPreviewDial)
-        this.previewWindowTime = response.previewWindowTime;
-        else
-        this.previewWindowTime = null;
-
-        this.getOutBoundWorklistCalls();
- 
+        {
+          this.previewWindowTime = response.previewWindowTime;
+          this.associateAnmMoService.isStartAutoPreviewDial = true
+          this.associateAnmMoService.openCompFlag$.subscribe((responseComp) => {
+            if (responseComp !== null && (responseComp === "Outbound Worklist" || responseComp === "Call Closed")) {
+             this.searchTerm = null;
+             if(this.activeMother === true) {
+              this.selectedRecordAfterFirstDial("mother");
+             }
+             else {
+              this.selectedRecordAfterFirstDial("child");
+             }
+            }
+            
+        });
+          // this.getOutBoundWorklistCalls();
+        }
+        else{
+          this.previewWindowTime = null;
+          this.associateAnmMoService.isStartAutoPreviewDial = false
+          this.associateAnmMoService.openCompFlag$.subscribe((responseComp) => {
+            if (responseComp !== null && (responseComp === "Outbound Worklist" || responseComp === "Call Closed")) {
+             this.searchTerm = null;
+             if(this.activeMother === true) {
+              this.selectedRecordAfterFirstDial("mother");
+             }
+             else {
+              this.selectedRecordAfterFirstDial("child");
+             }
+            }
+            
+        });
+          // this.getOutBoundWorklistCalls();
+        }
+      }
       },
       (err: any) => {
         if(err && err.error)
@@ -413,6 +440,7 @@ export class OutboundWorklistComponent implements OnInit {
   }
 
   StartAutoPreviewDialing(isChecked:any) {
+    this.associateAnmMoService.autoDialing = true;
     if (this.autoPreviewTimeSub) {
       this.autoPreviewTimeSub.unsubscribe();
     }
@@ -432,19 +460,16 @@ export class OutboundWorklistComponent implements OnInit {
   getAgentState(isMother:any) {
     let reqObj = {"agent_id" : this.loginService.agentId};
     this.ctiService.getAgentState(reqObj).subscribe((response:any) => {
-        if (response && response.data && response.data.stateObj.stateName) {
-           
+        if (response && response.data && response.data.stateObj.stateName) { 
             if (
               response.data.stateObj.stateName.toUpperCase() === "FREE" ||
               response.data.stateObj.stateName.toUpperCase() === "READY"
             ) {
               this.startAutoDialCall(isMother);
             } else {
-              this.confirmationService.openDialog(this.currentLanguageSet.agentIsNotInFreeOrReadState, 'error');
-              this.reset();
-            }
-          
+              this.reset();   
         }
+      }
         else {
           this.reset();
         }
@@ -465,7 +490,7 @@ startAutoDialCall(isMother:any) {
    
     if(this.mappedOutBoundWorkList.length > 0) {
       this.callBeneficary(this.mappedOutBoundWorkList[0],true);
-    
+ 
     }
 
   } else {
@@ -482,8 +507,7 @@ startAutoDialCall(isMother:any) {
 
 reset() {
 this.isChecked = false;
-this.associateAnmMoService.isStartAutoPreviewDial = false;
-
+this.associateAnmMoService.autoDialing =false;
 }
 
 

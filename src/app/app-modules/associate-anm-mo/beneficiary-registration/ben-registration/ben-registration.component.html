@@ -4,7 +4,7 @@
     <h2 class="inner fontStyleHeading">{{currentLanguageSet?.beneficiaryRegistration}}</h2>
     <button 
     mat-raised-button
-      *ngIf="selectedRole === 'MO' || selectedRole === 'ANM'"
+      *ngIf="selectedRole === 'MO' || selectedRole === 'ANM' || (selectedRole === 'Associate' && enableUpdateButton)"
       style="width: 200px; margin-top: -50px; float: right;" 
       class="buttonColor quesButton fontStyleButton"
       (click)="openEcdQuestionnaire()">
@@ -123,7 +123,44 @@
             </mat-select>
           </mat-form-field>
           </div>
-
+ 
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 box marginAlign" *ngIf="enableMotherRecord && selectedRole === 'Associate'">
+            <mat-form-field appearance="outline" class="fieldAlignment fontStyle">
+              <mat-label class="fontStyleDisabled ">{{ currentLanguageSet?.age}}</mat-label>
+              <input 
+                matInput
+                placeholder=""
+                class="fontStyle"
+                id="age"
+                min="12"
+                max="50"
+                formControlName="age"
+                type="number"
+                allowText="number"
+                (change)="ageEntered()"
+                defaultNull
+                required
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 box marginAlign" *ngIf="enableMotherRecord && selectedRole !== 'Associate'">
+            <mat-form-field appearance="outline" class="fieldAlignment fontStyle fieldStyleDisabled">
+              <mat-label class="fontStyleDisabled fieldStyleDisabled ">{{ currentLanguageSet?.age}}</mat-label>
+              <input 
+                matInput
+                placeholder=""
+                class="fontStyleDisabled"
+                id="age"
+                max = "50"
+                formControlName="age"
+                type="number"
+                allowText="number"
+                (change)="ageEntered()"
+                defaultNull
+                readonly
+              />
+            </mat-form-field>
+          </div>
           <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 box marginAlign">
             <mat-form-field appearance="outline" class="fieldAlignment fontStylefieldStyleDisabled">
               <mat-label class="fontStyleDisabled fieldStyleDisabled">{{ currentLanguageSet?.state}}</mat-label>
@@ -478,20 +515,20 @@
                   <mat-datepicker #eddPicker></mat-datepicker>
                 </mat-form-field>
             </div>
-
             <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 box marginAlign" *ngIf="!enableMotherRecord">
-              <mat-form-field appearance="outline" class="fieldAlignment fontStyle fieldStyleDisabled">
+              <mat-form-field appearance="outline" class="fieldAlignment fontStyle ">
                   <mat-label class="fontStyleDisabled">{{ currentLanguageSet?.dob}}</mat-label>
                   <input 
                     matInput 
-                    class="fontStyleDisabled fieldStyleDisabled"
+                    [readonly]="selectedRole !== 'Associate'"
+                    class="fontStyle"
                     [max] = "maxDate"
+                    [min] = "minimumDate"
                     [matDatepicker]="picker" 
                     [required]="enableMotherRecord ? true : false"
-                    readonly
                     formControlName="dob">
                   <mat-hint>MM/DD/YYYY</mat-hint>
-                  <mat-datepicker-toggle matSuffix [for]="picker" disabled></mat-datepicker-toggle>
+                  <mat-datepicker-toggle matSuffix [for]="picker" ></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
             </div>
@@ -515,7 +552,7 @@
           </div>
 
           <div class="row">
-          <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 box marginAlign">
+          <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 box marginAlignAdd">
             <mat-form-field appearance="outline" [style.width]="'100%'" class="fontStyle">
                 <mat-label class="fontStyle">{{ currentLanguageSet?.address}}</mat-label>
                 <textarea

@@ -63,6 +63,13 @@ mat-expansion-panel {
     line-height: 24px;
 }
 
+.radioButtonFontStyle {
+  font-family: "Lato", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+}
+
 .fontStyle {
   font-family: "Lato", sans-serif;
   font-weight: 400;
@@ -193,10 +200,33 @@ li::marker {
   .dropdownfontStyle {
     font-family: "Lato", sans-serif;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     color: #00071e;
   }
   .fieldStyleDisabled {
     cursor: not-allowed;
     pointer-events: none;
   }
+
+  .mat-option {
+    white-space: inherit;
+    overflow: visible;
+    text-overflow: unset;
+    /* display: block !important; */
+    line-height: 22px !important;
+    height: inherit !important;
+    padding: 10px 15px;
+    text-align: left;
+    text-decoration: none;
+    max-width: 100%;
+    height: inherit;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}

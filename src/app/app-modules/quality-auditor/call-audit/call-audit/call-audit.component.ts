@@ -22,7 +22,7 @@
 
 
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -33,6 +33,9 @@ import { MasterService } from 'src/app/app-modules/services/masterService/master
 import { QualityAuditorService } from 'src/app/app-modules/services/quality-auditor/quality-auditor.service';
 import { SetLanguageService } from 'src/app/app-modules/services/set-language/set-language.service';
 import { CallRatingComponent } from '../../call-rating/call-rating.component';
+import { ViewCasesheetComponent } from '../../view-casesheet/view-casesheet.component';
+import * as moment from 'moment';
+import { tr } from 'date-fns/locale';
 
 @Component({
   selector: 'app-call-audit',
@@ -43,13 +46,17 @@ export class CallAuditComponent implements OnInit {
   currentLanguageSet: any;
   selectedRoute: any;
   roles: any = [];
-
+  choice = ["Cycle Wise ", "Date Wise"];
+ option : any;
+ selectedRadioButtonChange: boolean = false;
+ dateWiseChangeForm: boolean = false;
+ iscycleWiseChangeForm: boolean = true;
   languages: any = [];
 
-  agents: any = [];
+  agents: any[] = [];
 
   // callAuditData: any = [];
-  displayedColumns: string[] = ['sNo', 'beneficiaryId', 'beneficiaryName', 'phoneNumber', 'agentName', 'callType' ,'action'];
+  displayedColumns: string[] = ['sNo', 'beneficiaryId', 'beneficiaryName', 'phoneNumber', 'agentName', 'callType' ,'casesheet','action'];
   searchTerm: any;
 
   callAuditData = new MatTableDataSource();
@@ -62,7 +69,19 @@ export class CallAuditComponent implements OnInit {
   currentYear = this.currentDate.getFullYear();
   currentMonth = this.currentDate.getMonth() + 1;
   cycles: any = [];
+  phoneNo: any;
+  date = new Date();
+ 
   showQualityAuditWorklist: boolean = false;
+ range  = new FormGroup({
+    start: new FormControl('', [Validators.required]),
+    end: new FormControl('', [Validators.required])
+  });
+  showAgentId: boolean = false;
+  
+  selectedFormValue: any = [];
+  selectedDateFormValue: any = [];
+  today = new Date();
 
   ngAfterViewInit() {
     this.callAuditData.paginator = this.paginator;
@@ -79,6 +98,21 @@ export class CallAuditComponent implements OnInit {
   ) { }
 
   callAuditForm = this.fb.group({
+    selectedRadioButton: new FormControl('', [Validators.required]),
+  });
+  dateWiseForm = this.fb.group({
+    role: ['', Validators.required],
+    roleId: [''],
+    language: ['', Validators.required],
+    agentId: ['', Validators.required],
+    isValid: ['', Validators.required],
+    startTime:[''],
+    endTime:[''],
+    phoneNo: new FormControl(''),
+    start: new FormControl('', [Validators.required]),
+    end: new FormControl('', [Validators.required])
+  });
+  cycleWiseForm = this.fb.group({
     role: ['', Validators.required],
     roleId: [''],
     language: ['', Validators.required],
@@ -98,15 +132,27 @@ export class CallAuditComponent implements OnInit {
     for (let i = this.currentYear - 5; i <= this.currentYear; i++) {
       this.years.push(i);
     }
-    if (this.qualityAuditorService.callAuditData != undefined){
-    this.callAuditForm.patchValue(this.qualityAuditorService.callAuditData);
+    this.callAuditForm.controls['selectedRadioButton'].setValue('1');
+    this.iscycleWiseChangeForm = true;
+    if(this.qualityAuditorService.showForm === false){
+    if (this.qualityAuditorService.callAuditData !== undefined && this.qualityAuditorService.callAuditData !== null && this.qualityAuditorService.isCycleWiseForm === true ){
+      this.callAuditForm.controls['selectedRadioButton'].setValue('1');
+      this.iscycleWiseChangeForm = true;
+    this.cycleWiseForm.patchValue(this.qualityAuditorService.callAuditData);
      this.getMonths();
      this.getAgentByRole();
-     
-    this.getQualityAudiotorWorklist();
+     this.getQualityAudiotorWorklist();
+    }else{
+      if(this.qualityAuditorService.callAuditData !== undefined && this.qualityAuditorService.callAuditData !== null){
+      this.callAuditForm.controls['selectedRadioButton'].setValue('2');
+      this.iscycleWiseChangeForm = false;
+      this.dateWiseForm.patchValue(this.qualityAuditorService.callAuditData);
+      this.getAgentByRole();
+      this.getDateWiseAudiotorWorklist();
     }
+  }}
   }
-
+  
   getSelectedLanguage() {
     if (
       this.setLanguageService.languageData !== undefined &&
@@ -116,7 +162,7 @@ export class CallAuditComponent implements OnInit {
   }
 
   getMonths(){
-    const selectedYear = this.callAuditForm.controls.year.value ? parseInt(this.callAuditForm.controls.year.value.toString(), 10) : 0;
+    const selectedYear = this.cycleWiseForm.controls.year.value ? parseInt(this.cycleWiseForm.controls.year.value.toString(),10) : 0;
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
     if (selectedYear === currentYear) {
@@ -192,11 +238,13 @@ export class CallAuditComponent implements OnInit {
   }
 
   getAgentByRole(){
-    if (this.qualityAuditorService.callAuditData === undefined){
-    this.callAuditForm.controls.agentId.reset();
-    }
-    let roleId = this.callAuditForm.controls.roleId.value;
-    let role = this.callAuditForm.controls.role.value;
+    if(this.callAuditForm.controls['selectedRadioButton'].value === '1'){
+    // if (this.qualityAuditorService.callAuditData === undefined &&  this.qualityAuditorService.callAuditData[0].selectedRadioButton === '1' ){
+    // this.cycleWiseForm.controls.agentId.reset();
+    // this.dateWiseForm.controls.agentId.reset();
+    // }
+    let roleId = this.cycleWiseForm.controls.roleId.value;
+    let role = this.cycleWiseForm.controls.role.value;
     this.masterService.getAgentMasterByRoleId(roleId).subscribe((res: any) => {
       if(res && res.length > 0){
         this.agents = res;
@@ -208,21 +256,60 @@ export class CallAuditComponent implements OnInit {
       this.confirmationService.openDialog(err.error, 'error');
     }
     );
+  }else{
+    // if (this.qualityAuditorService.callAuditData === undefined && this.qualityAuditorService.callAuditData[0].selectedRadioButton === '2'){
+    //   this.cycleWiseForm.controls.agentId.reset();
+    //   this.dateWiseForm.controls.agentId.reset();
+    //   }
+      let roleId = this.dateWiseForm.controls.roleId.value;
+      let role = this.dateWiseForm.controls.role.value;
+      this.masterService.getAgentMasterByRoleId(roleId).subscribe((res: any) => {
+        if(res && res.length > 0){
+          this.agents = res;
+        }else {
+          this.confirmationService.openDialog(this.currentLanguageSet.noAgentsFoundFor + role + this.currentLanguageSet.role, 'error');
+        }
+      },
+      (err: any) => {
+        this.confirmationService.openDialog(err.error, 'error');
+      }
+      );
+  }
   }
 
   getRoleId(){
-    let role = this.callAuditForm.controls.role.value;
+    if(this.callAuditForm.controls['selectedRadioButton'].value === '1'){
+      this.cycleWiseForm.controls['agentId'].reset()
+    // this.cycleWiseForm.controls['agentId'].markAsPristine();
+    
+    let role = this.cycleWiseForm.controls.role.value;
     this.roles.filter((item: any) => {
       if(item.roleName == role)
-      this.callAuditForm.controls.roleId.patchValue(item.roleId);
+      this.cycleWiseForm.controls.roleId.patchValue(item.roleId);
+    });
+  }else{
+    this.dateWiseForm.controls.agentId.reset();
+    let role = this.dateWiseForm.controls.role.value;
+    this.roles.filter((item: any) => {
+      if(item.roleName == role)
+      this.dateWiseForm.controls.roleId.patchValue(item.roleId);
     });
   }
+  }
   getRoleNames(){
+    if(this.callAuditForm.controls['selectedRadioButton'].value === '1'){
     let role = this.qualityAuditorService.callAuditData.roleId;
     this.roles.filter((item: any) => {
       if(item.roleId == role)
-      this.callAuditForm.controls.role.patchValue(item.rolename);
+      this.cycleWiseForm.controls.role.patchValue(item.rolename);
     });
+  }else{
+    let role = this.qualityAuditorService.callAuditData.roleId;
+    this.roles.filter((item: any) => {
+      if(item.roleId == role)
+      this.dateWiseForm.controls.role.patchValue(item.rolename);
+    });
+  }
   }
   
   routeToAgentRating(data: any, auditType: String){
@@ -261,19 +348,22 @@ export class CallAuditComponent implements OnInit {
   }
 
   getQualityAudiotorWorklist(){
-    let reqObj = {
+    if(this.callAuditForm.controls['selectedRadioButton'].value === '1'){
+      let reqObj = {
       psmId: sessionStorage.getItem('providerServiceMapID'),
-      languageId: this.callAuditForm.controls.language.value,
-      agentId: this.callAuditForm.controls.agentId.value,
-      roleId: this.callAuditForm.controls.roleId.value,
-      isValid: (this.callAuditForm.controls.isValid.value == "true") ? true : false,
-      year: this.callAuditForm.controls.year.value,
-      month: this.callAuditForm.controls.month.value,
-      cycleId: this.callAuditForm.controls.cycle.value,
+      languageId: this.cycleWiseForm.controls.language.value,
+      agentId: this.cycleWiseForm.controls.agentId.value,
+      roleId: this.cycleWiseForm.controls.roleId.value,
+      isValid: (this.cycleWiseForm.controls.isValid.value == "true") ? true : false,
+      year: this.cycleWiseForm.controls.year.value,
+      month: this.cycleWiseForm.controls.month.value,
+      cycleId: this.cycleWiseForm.controls.cycle.value,
       fromDate: null,
       toDate: null
     }
-   this.qualityAuditorService.callAuditData=this.callAuditForm.value;
+    this.qualityAuditorService.isCycleWiseForm = this.iscycleWiseChangeForm ;
+  this.qualityAuditorService.callAuditData = null;
+   this.qualityAuditorService.callAuditData = this.cycleWiseForm.value;
    console.log(this.qualityAuditorService.callAuditData);
     this.qualityAuditorService.getQualityAuditorWorklist(reqObj).subscribe((res: any) => {
       if(res && res.length > 0){
@@ -296,6 +386,51 @@ export class CallAuditComponent implements OnInit {
     }
     );
   }
+    
+  else{
+    this.getDateWiseAudiotorWorklist();
+  }
+}
+  getDateWiseAudiotorWorklist(){
+    let fromDate =  moment(this.dateWiseForm.controls.start.value).format('YYYY-MM-DDThh:mm:ssZ');
+    let toDate =  moment(this.dateWiseForm.controls.end.value).format('YYYY-MM-DDThh:mm:ssZ');   
+    let reqObj = {
+      psmId: sessionStorage.getItem('providerServiceMapID'),
+      languageId: this.dateWiseForm.controls.language.value,
+      agentId: this.dateWiseForm.controls.agentId.value,
+      roleId: this.dateWiseForm.controls.roleId.value,
+      isValid: (this.dateWiseForm.controls.isValid.value == "true") ? true : false,
+      validFrom: fromDate,
+      validTill: toDate,
+      cycleId: null,
+      beneficiaryPhoneNumber : this.dateWiseForm.controls.phoneNo.value
+      
+    }
+    this.qualityAuditorService.isCycleWiseForm = this.iscycleWiseChangeForm ;
+    this.qualityAuditorService.callAuditData = null;
+    this.qualityAuditorService.callAuditData = this.dateWiseForm.value;
+    console.log(this.qualityAuditorService.callAuditData);
+     this.qualityAuditorService.getQualityAuditorDateWorklist(reqObj).subscribe((res: any) => {
+       if(res && res.length > 0){
+         this.callData = res;
+         this.refresh(res);
+       } else if(res.length <= 0) {
+         this.confirmationService.openDialog(this.currentLanguageSet.noDataFoundForCallRating, 'error');
+         this.callData = [];
+         this.callAuditData.data = [];
+         this.callAuditData.paginator = this.paginator;      
+       } else {
+         this.confirmationService.openDialog(res.errorMessage, 'error');
+         this.callData = [];
+         this.callAuditData.data = [];
+         this.callAuditData.paginator = this.paginator;  
+       }
+     },
+     (err: any) => {
+       this.confirmationService.openDialog(err.error, 'error');
+     }
+     );
+  }
 
   refresh(res: any){
     this.changeDetectorRefs.detectChanges();
@@ -303,4 +438,66 @@ export class CallAuditComponent implements OnInit {
     this.callAuditData.data = res;
     this.callAuditData.paginator = this.paginator;
   }
+  viewCasheet(element:any){
+    let reqObj={
+      benCallId:element.benCallID,
+      beneficiaryId:element.beneficiaryid
+    }
+    this.qualityAuditorService.loadComponent(
+      ViewCasesheetComponent,
+      reqObj
+    );
+  }
+  invalidTimeFlag = false;
+  validateTime(start_date: any, end_date: any, start_time: any, end_time: any) {
+    if (start_time === undefined && end_time === undefined && start_time ==="" && end_time ==="") {
+    }
+    if (start_time != undefined && start_time != "" && end_time != undefined && end_time != "" && start_date.getDate() != undefined && start_date.getDate() != "" && end_date.getDate() != undefined && end_date.getDate() != ""
+    ) {
+      if (
+        start_date.getDate() === end_date.getDate() &&
+        start_time > end_time
+      ) {
+        this.invalidTimeFlag = true;
+      }
+      if (
+        start_date.getDate() === end_date.getDate() &&
+        start_time < end_time
+      ) {
+        this.invalidTimeFlag = false;
+      }
+      if (
+        start_date.getDate() === end_date.getDate() &&
+        start_time === end_time
+      ) {
+        this.invalidTimeFlag = true;
+      }
+      if (start_date.getDate() != end_date.getDate()) {
+        this.invalidTimeFlag = false;
+      }
+    }
+  }
+  onRadioButtonChange(){
+    if(this.callAuditForm.controls['selectedRadioButton'].value === '1') {
+      // this.selectedRadioButtonChange = true;
+      this.iscycleWiseChangeForm = false;
+    } else{
+      this.iscycleWiseChangeForm = true;
+    }
+    this.callAuditForm.reset();
+    // this.range.reset();
+    this.cycleWiseForm.reset();
+    this.dateWiseForm.reset();
+    this.callData = [];
+    this.callAuditData.data = [];
+    this.callAuditData.paginator = this.paginator; 
+  }
+  // agentIdSelection(){
+  // if(this.agents[i].agentId !== undefined && this.agents[i].agentId !== null){
+  // this.showAgentId = true;
+  // }
+  // else{
+  //   this.showAgentId = false;
+  // }
+  // }
 }

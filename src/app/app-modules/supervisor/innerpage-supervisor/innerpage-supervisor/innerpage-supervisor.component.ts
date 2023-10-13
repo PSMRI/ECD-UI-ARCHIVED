@@ -48,6 +48,7 @@ import { FormBuilder } from '@angular/forms';
 import { SupervisorNotificationComponent } from '../../activities/notification-supervisor/supervisor-notification/supervisor-notification.component';
 import { SetLanguageService } from 'src/app/app-modules/services/set-language/set-language.service';
 import { SupervisorReportsComponent } from '../../supervisor-reports/supervisor-reports/supervisor-reports.component';
+import { MapQuestionaireConfigurationComponent } from '../../configurations/question-Mapping/map-questionaire-configuration/map-questionaire-configuration.component';
 // import { SupervisorReportsComponent } from '../'
 
 @Component({
@@ -75,7 +76,8 @@ export class InnerpageSupervisorComponent implements OnInit {
     smsTemplate: SmsTemplateComponent,
     autoPreviewDialing: DialPreferenceComponent,
     forceLogout:ForceLogoutComponent,
-    reports:SupervisorReportsComponent
+    reports:SupervisorReportsComponent,
+    MapQuestionnaireConfiguration:MapQuestionaireConfigurationComponent
   };
   selectedRoute: any;
   currentLanguageSet: any;
@@ -114,7 +116,7 @@ export class InnerpageSupervisorComponent implements OnInit {
     value === "notifications" || value === "locationMessages"|| value === "forceLogout")
     this.innerpageheaderForm.controls.selectedActivity.patchValue(value);
     else if(value === "callConfiguration" || value === "QuestionnaireConfiguration" || value === "sectionConfiguration" || 
-    value === "smsTemplate" || value === "autoPreviewDialing" || value === "MapSectionQuestionnaire")
+    value === "smsTemplate" || value === "autoPreviewDialing" || value === "MapSectionQuestionnaire" || value === "MapQuestionnaireConfiguration")
     this.innerpageheaderForm.controls.selectedConfiguration.patchValue(value);
     else 
     this.innerpageheaderForm.controls.selectedReport.patchValue(value);

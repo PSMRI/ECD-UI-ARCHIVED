@@ -36,11 +36,14 @@
       mat-table
       [dataSource]="section.questions"
     >
-      <ng-container matColumnDef="questionnaire">
+    <ng-container matColumnDef="questionnaire">
         <th mat-header-cell *matHeaderCellDef></th>
-        <td class="questionWidth" style="font-weight: 600" mat-cell *matCellDef="let element">
-          {{ element.question }}
-        </td>
+          <td class="questionWidth" mat-cell *matCellDef="let element">
+            <span [ngStyle]="{'font-weight': element.isFatalQues ? '600' : 'normal',
+                              'color': element.isFatalQues ? 'red' : 'inherit'}">
+            {{ element.question }}
+            </span>
+          </td>
         <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 

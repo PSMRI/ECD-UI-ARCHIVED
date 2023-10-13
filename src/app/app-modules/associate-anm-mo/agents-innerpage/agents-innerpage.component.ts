@@ -23,7 +23,7 @@
 
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { interval, map, Observable, Subscription, take, timer } from 'rxjs';
+import { interval, map, Observable, Subject, Subscription, take, timer } from 'rxjs';
 import { OutboundWorklistComponent } from '../outbound-worklist/outbound-worklist.component';
 import { ConfirmationService } from '../../services/confirmation/confirmation.service';
 import { BenRegistrationComponent } from '../beneficiary-registration/ben-registration/ben-registration.component';
@@ -92,6 +92,7 @@ export class AgentsInnerpageComponent implements OnInit {
    
 
     this.associateAnmMoService.resetOpenComp();
+    this.associateAnmMoService.clearStopTimer();
     this.associateAnmMoService.clearCallClosure();
     this.getSelectedLanguage();
     this.addListener();
@@ -110,9 +111,6 @@ export class AgentsInnerpageComponent implements OnInit {
     this.associateAnmMoService.openCompFlag$.subscribe((responseComp) => {
       if (responseComp !== null && (responseComp === "Call Closure" || responseComp === "Outbound Worklist" || responseComp === "Beneficiary Call History" || responseComp === "Beneficiary Registration" || responseComp === "ECD Questionnaire" || responseComp === "Call Closed")) {
         if(responseComp === "Call Closed") {
-          if (this.timerSubscription != undefined) {
-            this.timerSubscription.unsubscribe();
-          }
           this.unsubscribeWrapupTime();
           if (this.callTimerSubscription != undefined) {
             this.callTimerSubscription.unsubscribe();
@@ -141,6 +139,15 @@ export class AgentsInnerpageComponent implements OnInit {
       }) 
     ).subscribe(); 
 
+    console.log("Agent Status Observable");
+    this.associateAnmMoService.resetAgentStatusFlag$.subscribe((resetStatus) => {
+      console.log("Agent Status Observable");
+      if(resetStatus != undefined && resetStatus != null) {
+        console.log("Agent Status Observable");
+        this.agentStatus = resetStatus;
+        console.log("Agent Status resetting");
+      }
+    })
   
    
 
@@ -174,7 +181,13 @@ export class AgentsInnerpageComponent implements OnInit {
   
 
     
-
+  this.associateAnmMoService.stopTimerFlag$.subscribe((res: any) => {
+    if(res != undefined && res != null && res == true){
+      this.ticks = 0;
+    }
+    console.log("timer stopped", this.ticks);
+  })
+  console.log("timer stopped now", this.ticks);
   }
   getSelectedLanguage() {
     if (
@@ -189,6 +202,8 @@ export class AgentsInnerpageComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    this.associateAnmMoService.isStartAutoPreviewDial = false;
+    this.associateAnmMoService.autoDialing = false;
     console.log("removing message listener");
     removeEventListener("message", this.toRemove, false);
     if (this.timerSubscription != undefined) {
@@ -498,7 +513,8 @@ export class AgentsInnerpageComponent implements OnInit {
       deleted: false,
       createdBy: sessionStorage.getItem("userName"),
       modifiedBy: sessionStorage.getItem("userName"),
-      complaintId: null
+      complaintId: null,
+      isWrongNumber: false
     };
     let commonReqobj = {
       benCallID: this.associateAnmMoService.callDetailId,
@@ -524,6 +540,7 @@ export class AgentsInnerpageComponent implements OnInit {
        this.associateAnmMoService.callClosure(reqObj).subscribe(
         (response: any) => {
           if (response) {
+            this.associateAnmMoService.setStopTimer(true);
             this.confirmationService.openDialog(
               this.currentLanguageSet.callClosedSuccessfully,
               'success'
@@ -560,7 +577,7 @@ export class AgentsInnerpageComponent implements OnInit {
 
     getCallTypes() {
       let reqObj={
-        providerServiceMapID: 1252
+        providerServiceMapID: sessionStorage.getItem('providerServiceMapID')
       }
       this.associateAnmMoService.getCallTypes(reqObj).subscribe(
         (response:any) => {
@@ -614,8 +631,7 @@ export class AgentsInnerpageComponent implements OnInit {
     this.ctiService.getAgentState(reqObj).subscribe((response:any) => {
         if (response && response.data && response.data.stateObj.stateName) {
             this.agentStatus = response.data.stateObj.stateName;
-            
-          
+            this.associateAnmMoService.setAgentState(this.agentStatus);
         }
 
     }, (err) => {
@@ -664,8 +680,5 @@ export class AgentsInnerpageComponent implements OnInit {
     }
 
   }
-
-
-
 
 }

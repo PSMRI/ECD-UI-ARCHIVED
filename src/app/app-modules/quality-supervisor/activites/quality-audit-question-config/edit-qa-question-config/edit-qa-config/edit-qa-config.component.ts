@@ -52,6 +52,7 @@ export class EditQaConfigComponent implements OnInit {
   @Input() maxValue: number = 50;
   numericValue: number | undefined; 
   isOptionFilled: boolean = false;
+  isFatalQues: boolean = false;
   
   constructor(
     private fb: FormBuilder,
@@ -64,6 +65,7 @@ export class EditQaConfigComponent implements OnInit {
   editQualityAuditorQuestionnaireForm = this.fb.group({
     sectionId:[''],
     question: ['', [Validators.required,this.validateWhitespace]],
+    isFatalQues: false,
     sectionName: ['', Validators.required],
     questionRank: ['', Validators.required],
     answerType: ['', Validators.required],
@@ -110,6 +112,12 @@ export class EditQaConfigComponent implements OnInit {
     this.editQualityAuditorQuestionnaireForm.get('newOption')?.valueChanges.subscribe(() => {
       this.editQualityAuditorQuestionnaireForm.markAsDirty(); 
       });
+  }
+
+  onClickOfFatalQues(event: any) {
+    const isChecked = event.checked;
+    // this.createQualityAuditorQuestionnaireForm.get('isFatalQues')?.setValue(event.checked);
+    this.editQualityAuditorQuestionnaireForm.patchValue({ isFatalQues: isChecked});
   }
 
   ngDoCheck() {
@@ -258,6 +266,7 @@ export class EditQaConfigComponent implements OnInit {
       sectionName: editValueData.sectionName,
       sectionRank: editValueData.sectionRank,
       deleted: false,
+      isFatalQues: editValueData.isFatalQues,
       createdBy: sessionStorage.getItem('userName'),
       modifiedBy: sessionStorage.getItem('userName'),
       psmId: sessionStorage.getItem('providerServiceMapID'),

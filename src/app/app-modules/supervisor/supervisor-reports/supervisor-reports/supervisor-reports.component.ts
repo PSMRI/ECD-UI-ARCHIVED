@@ -87,7 +87,7 @@ export class SupervisorReportsComponent implements OnInit {
       else if (control.value && matchingControl.value) {
         const diffInTime = matchingControl.value.getTime() - control.value.getTime();
         const diffInDays = diffInTime / (1000 * 3600 * 24);
-        if (diffInDays > 7) {
+        if (diffInDays >= 31) {
           control.setErrors({ valueGreater: true })
         } else {
          control.setErrors(null);

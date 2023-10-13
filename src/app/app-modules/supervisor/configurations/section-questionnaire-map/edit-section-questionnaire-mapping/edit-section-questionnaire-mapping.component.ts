@@ -39,6 +39,8 @@ import { SectionQuestionnaireMappingComponent } from '../section-questionnaire-m
 })
 export class EditSectionQuestionnaireMappingComponent implements OnInit {
   currentLanguageSet: any;
+  roles :any = [];
+  roleName: any =[];
   @Input()
   public data: any;
   selectedQuestionnaireSectionList: any;
@@ -53,6 +55,7 @@ export class EditSectionQuestionnaireMappingComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSelectedLanguage();
+    this.getRolesForQuestionare();
     if (
       this.data.selectedQuestionnaireSectionData !== null &&
       this.data.selectedQuestionnaireSectionData !== undefined
@@ -80,6 +83,7 @@ export class EditSectionQuestionnaireMappingComponent implements OnInit {
     question: [{ value: '', disabled: true }],
     sectionQuestionRank: [''],
     deleted: [''],
+    roleType:['']
   });
 
   ngDoCheck() {
@@ -122,6 +126,9 @@ export class EditSectionQuestionnaireMappingComponent implements OnInit {
       ].patchValue(this.selectedQuestionnaireSectionList.question);
       this.editQuestionnaireSectionMappingForm.controls['sectionQuestionRank'].patchValue(
         this.selectedQuestionnaireSectionList.sectionQuestionRank
+      );
+      this.editQuestionnaireSectionMappingForm.controls['roleType'].patchValue(
+        this.selectedQuestionnaireSectionList.roles
       );
       this.editQuestionnaireSectionMappingForm.controls['deleted'].patchValue(
         this.selectedQuestionnaireSectionList.deleted
@@ -170,12 +177,13 @@ export class EditSectionQuestionnaireMappingComponent implements OnInit {
       //   'sectionName'
       // ].value,
       rank: editValue.sectionQuestionRank,
+      roles: editValue.roleType,
       createdBy: sessionStorage.getItem('userName'),
       modifiedBy: sessionStorage.getItem('userName'),
       deleted: false,
       psmId: sessionStorage.getItem('providerServiceMapID')
     };
-
+    console.log('reole',this.editQuestionnaireSectionMappingForm.controls.roleType.value);
     let isDuplicateFromMainList =
       this.checkDuplicateFromMainListForEdit(reqObj);
     if (isDuplicateFromMainList === true) {
@@ -236,4 +244,16 @@ export class EditSectionQuestionnaireMappingComponent implements OnInit {
 
     return isDuplicate;
   }
+  getRolesForQuestionare(){
+    let  providerServiceMapId = sessionStorage.getItem('providerServiceMapID');
+    this.masterService.getRoleMaster(providerServiceMapId).subscribe((res:any)=>{
+      if(res){
+        res.filter((role: any) => {
+          if(role.roleName.toLowerCase() !== "supervisor" &&role.roleName.toLowerCase() !== "quality auditor" && role.roleName.toLowerCase() !== "quality supervisor" ){
+            this.roles.push(role)
+          }
+        })
+      }
+    })
+   }
 }

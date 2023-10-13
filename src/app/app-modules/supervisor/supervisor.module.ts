@@ -66,6 +66,11 @@ import { EditNotificationComponent } from './activities/notification-supervisor/
 import { SharedModule } from '../shared/shared.module';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { SupervisorReportsComponent } from './supervisor-reports/supervisor-reports/supervisor-reports.component';
+// import { QuestionMappingComponent } from './configurations/question-mapping/question-mapping.component';
+import { MapQuestionaireConfigurationComponent } from './configurations/question-Mapping/map-questionaire-configuration/map-questionaire-configuration.component';
+import { CreateQuestionMappingComponent } from './configurations/question-Mapping/create-question-mapping/create-question-mapping.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { EditQuestionMappingComponent } from './configurations/question-Mapping/edit-question-mapping/edit-question-mapping.component';
 @NgModule({
   declarations: [
     InnerpageSupervisorComponent,
@@ -96,7 +101,11 @@ import { SupervisorReportsComponent } from './supervisor-reports/supervisor-repo
     EditNotificationComponent,
     CreateLocationMessageComponent,
     EditLocationMessageComponent,
-    SupervisorReportsComponent
+    SupervisorReportsComponent,
+    // QuestionMappingComponent,
+    MapQuestionaireConfigurationComponent,
+    CreateQuestionMappingComponent,
+    EditQuestionMappingComponent
   ],
   imports: [
     CommonModule,
@@ -111,7 +120,8 @@ import { SupervisorReportsComponent } from './supervisor-reports/supervisor-repo
     MatTooltipModule,
     MatCardModule,
     SharedModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatAutocompleteModule,
   ],
   exports: [
     InnerpageSupervisorComponent,

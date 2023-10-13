@@ -32,7 +32,9 @@ export class QualityAuditorService {
 
   private container: any;
   private componentRef!: ComponentRef<any>;
-  callAuditData:any;
+  callAuditData:any = [];
+  isCycleWiseForm : boolean = true;
+  showForm : boolean = true;
 
   constructor(
     private http: HttpClient,
@@ -52,6 +54,9 @@ export class QualityAuditorService {
 
   getQualityAuditorWorklist(reqObj: any){
     return this.http.post(environment.getAuditorWorklistUrl, reqObj);
+  }
+  getQualityAuditorDateWorklist(reqObj: any){
+    return this.http.post(environment.getDateWiseAuditorWorklistUrl, reqObj);
   }
 
   getQualityAuditGrades(psmId: any){
@@ -77,6 +82,9 @@ export class QualityAuditorService {
 
   getCallRecording(reqObj: any){
     return this.http.post(environment.getCallRecordingUrl,reqObj);
+  }
+  getCaseSheetDataFromService(reqObj: any){
+    return this.http.post(environment.getCaseSheetDataURL,reqObj);
   }
 
 }

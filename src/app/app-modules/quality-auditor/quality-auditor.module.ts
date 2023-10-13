@@ -38,6 +38,7 @@ import { MaterialModule } from '../material/material.module';
 import { MatInputModule } from '@angular/material/input';
 import { CallRatingComponent } from './call-rating/call-rating.component';
 import { SharedModule } from '../shared/shared.module';
+import { ViewCasesheetComponent } from './view-casesheet/view-casesheet.component';
 
 
 
@@ -45,7 +46,8 @@ import { SharedModule } from '../shared/shared.module';
   declarations: [
     CallAuditComponent,
     InnerpageQualityAuditorComponent,
-    CallRatingComponent
+    CallRatingComponent,
+    ViewCasesheetComponent
   ],
   imports: [
     CommonModule,

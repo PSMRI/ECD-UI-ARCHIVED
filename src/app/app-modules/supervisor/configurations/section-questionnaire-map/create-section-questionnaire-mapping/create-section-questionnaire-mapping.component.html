@@ -143,6 +143,29 @@
               </mat-form-field>
             </td>
           </ng-container>
+          <ng-container matColumnDef="roleType">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ currentLanguageSet?.role }}
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let element; let i = index"
+              [formGroupName]="getActualIndex(i)"
+            >
+              <mat-form-field appearance="standard" class="tableInput">
+                <mat-select
+            name="roleType"
+            [value]="roles"
+            multiple
+            formControlName="roleType"
+          >
+            <mat-option *ngFor="let type of roles" [value]="type.roleName">{{
+              type.roleName
+            }}</mat-option>
+          </mat-select>
+              </mat-form-field>
+            </td>
+          </ng-container>
 
           <ng-container matColumnDef="selected">
             <th mat-header-cell *matHeaderCellDef></th>
@@ -161,14 +184,23 @@
                     element.value.rank !== null &&
                     element.value.rank !== undefined &&
                     element.value.rank !== ''
+                  ) ||  !(
+                    element.value.roleType !== null &&
+                    element.value.roleType !== undefined &&
+                    element.value.roleType !== ''
                   )
                 "
                 [required]="
-                  element.value.rank !== null &&
+                 ( element.value.rank !== null &&
                   element.value.rank !== undefined &&
                   element.value.rank !== ''
                     ? true
-                    : false
+                    : false) ||
+                    ( element.value.roleType !== null &&
+                  element.value.roleType !== undefined &&
+                  element.value.roleType !== ''
+                    ? true
+                    : false)
                 "
               ></mat-checkbox>
             </td>

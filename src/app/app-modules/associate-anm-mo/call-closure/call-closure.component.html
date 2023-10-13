@@ -37,12 +37,14 @@
                         </div>
                     </div>
                     <div class="row" style="margin-bottom: 20px;">
-                        <div style="padding: 8px;" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 box m-bottom">
+                        <div style="padding: 8px; margin-left: -157px;" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 box m-bottom">
                             <label style="margin-left: 160px;" class="radio-button-styling" id="isCallAnswered"> {{currentLanguageSet?.callAnswered}}
                             </label>
                             <mat-radio-group required id="isCallAnswered" formControlName="isCallAnswered"
                                 aria-label="isCallAnswered"
-                                (change)="selectNoCallAnswered(callClosureForm.controls['isCallAnswered'].value)">
+                                (change)="selectNoCallAnswered(callClosureForm.controls['isCallAnswered'].value);
+                                checkIsNextAttempt(callClosureForm.controls['isCallAnswered'].value,
+                            callClosureForm.controls['isCallVerified'].value,callClosureForm.controls['isCallDisconnected'].value)">
                                 <mat-radio-button class="m-10" value="Yes">{{currentLanguageSet?.yes}}</mat-radio-button>
                                 <mat-radio-button class="m-10" value="No">{{currentLanguageSet?.no}}</mat-radio-button>
                             </mat-radio-group>
@@ -68,10 +70,11 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div style="padding: 8px;" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 box m-bottom">
+                        <div [hidden]="showVerifiedFields == false" style="padding: 8px; margin-left: -170px;" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 box m-bottom">
                             <label style="margin-left: 175px;" class="radio-button-styling" id="isCallVerified">{{currentLanguageSet?.callVerified}}
                             </label>
-                            <mat-radio-group required id="isCallVerified" formControlName="isCallVerified"
+                            <mat-radio-group (change)="checkIsNextAttempt(callClosureForm.controls['isCallAnswered'].value,
+                            callClosureForm.controls['isCallVerified'].value,callClosureForm.controls['isCallDisconnected'].value)" [required]="showVerifiedFields" id="isCallVerified" formControlName="isCallVerified"
                               aria-label="isCallVerified">
                                 <mat-radio-button class="m-10" value="Yes" >{{currentLanguageSet?.yes}}</mat-radio-button>
                                 <mat-radio-button class="m-10" value="No">{{currentLanguageSet?.no}}</mat-radio-button>
@@ -81,8 +84,19 @@
                         <div style="padding: 8px;" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 box m-bottom">
                             <label class="radio-button-styling" id="isCallDisconnected">{{currentLanguageSet?.callDisconnected}}
                             </label>
-                            <mat-radio-group required id="isCallDisconnected" formControlName="isCallDisconnected"
+                            <mat-radio-group (change)="checkIsNextAttempt(callClosureForm.controls['isCallAnswered'].value,
+                            callClosureForm.controls['isCallVerified'].value,callClosureForm.controls['isCallDisconnected'].value)"
+                             required id="isCallDisconnected" formControlName="isCallDisconnected"
                                 aria-label="isCallDisconnected">
+                                <mat-radio-button class="m-10" value="Yes">{{currentLanguageSet?.yes}}</mat-radio-button>
+                                <mat-radio-button class="m-10" value="No">{{currentLanguageSet?.no}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                        <div [hidden]="showVerifiedFields == false" style="padding: 8px; margin-left: -137px;" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 box m-bottom">
+                            <label class="radio-button-styling" id="isWrongNumber">{{currentLanguageSet?.isWrongNumber}}
+                            </label>
+                            <mat-radio-group [required]="showVerifiedFields" id="isWrongNumber" formControlName="isWrongNumber"
+                                aria-label="isWrongNumber">
                                 <mat-radio-button class="m-10" value="Yes">{{currentLanguageSet?.yes}}</mat-radio-button>
                                 <mat-radio-button class="m-10" value="No">{{currentLanguageSet?.no}}</mat-radio-button>
                             </mat-radio-group>
@@ -110,7 +124,7 @@
                         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 box m-bottom">
                             <mat-form-field class="backgroundWhite" appearance="outline"  style="width:100%">
                                 <mat-label>{{currentLanguageSet?.nextAttempt}}</mat-label>
-                                <input (change)="CheckFutureTime()"  matInput  name="nextAttemptDate" type="datetime-local" placeholder="Next Attemt Call Date And Time " formControlName="nextAttemptDate" 
+                                <input (change)="CheckFutureTime()" [min] ="minimumDate | date:'yyyy-MM-ddTHH:mm'"  matInput   name="nextAttemptDate" type="datetime-local" placeholder="Next Attemt Call Date And Time " formControlName="nextAttemptDate" 
                                      />
                                     <!-- <mat-error
                                     *ngIf="callClosureForm.controls['nextAttemptDate'].errors?.['required']">{{

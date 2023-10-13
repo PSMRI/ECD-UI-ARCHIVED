@@ -60,6 +60,7 @@ export class ViewDetailsComponent implements OnInit {
         lmpDate:[''],
         edd:[''],
         nextAnc : [''],
+        age: ['']
   })
   viewOutboundWorklistFormForChild = this.fb.group({
     id: [''],
