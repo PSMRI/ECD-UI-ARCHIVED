@@ -538,17 +538,27 @@ export class EcdQuestionnaireComponent implements OnInit {
                       const indexToRemove = questionnaire.enabledQues.indexOf(answer.parentQuesId);
                       if (indexToRemove !== -1) { 
                         questionnaire.enabledQues.splice(indexToRemove, 1);
-                        questionnaire.answer = null; 
+                        if(questionnaire.enabledQues.length <= 0){
+                          questionnaire.answer = null;
+                        }
+                        this.processFilteredQuestionnaires(questionnaire);
                       }                    
                     }
                 }
                 })
               
-            } else if((questionnaire.parentQuestionId === selectedAnsweredQues.questionid) &&
-                        (selectedAnsweredQues.answer == null || !questionnaire.parentAnswer.includes(selectedAnsweredQues.answer) )) {
-              questionnaire.enabledQues = false;
-              questionnaire.answer = null;
-              this.processFilteredQuestionnaires(questionnaire);
+            } else if(questionnaire.parentQuestionId !== null && questionnaire.parentQuestionId.includes(selectedAnsweredQues.questionid) &&
+                        selectedAnsweredQues.answer == null){ // || !questionnaire.parentAnswer.includes(selectedAnsweredQues.answer) )) {
+                          questionnaire.parentAnswer.forEach((answer: any) => {
+                        const indexToRemove = questionnaire.enabledQues.indexOf(answer.parentQuesId);
+                          if (indexToRemove !== -1) { 
+                            questionnaire.enabledQues.splice(indexToRemove, 1);
+                            if(questionnaire.enabledQues.length <= 0){
+                              questionnaire.answer = null;
+                          this.processFilteredQuestionnaires(questionnaire);
+              }
+            }
+          });
             }
           } else if (selectedAnsweredQues.answerType != null && selectedAnsweredQues.answerType != undefined &&
             selectedAnsweredQues.answerType.toLowerCase() === "multiple") {
@@ -556,8 +566,8 @@ export class EcdQuestionnaireComponent implements OnInit {
                 selectedAnsweredQues.answer != null){ // && selectedAnsweredQues.answer.includes(questionnaire.parentAnswer)) {
                   questionnaire.parentAnswer.forEach((answer: any) => {
                     if(answer.parentQuesId == selectedAnsweredQues.questionid) 
-                    if(answer.parentAnswerList.filter((item:any) => item.includes(selectedAnsweredQues.answer))){
-                      console.log("Condition passed: answer.parentAnswerList includes selectedAnsweredQues.answer");
+                    if (answer.parentAnswerList.some((item: any) => selectedAnsweredQues.answer.includes(item))) {
+                      console.log("Condition passed: at least one item in answer.parentAnswerList matches selectedAnsweredQues.answer");                
                       if(!questionnaire.enabledQues.includes(answer.parentQuesId) ){
                         questionnaire.enabledQues.push(answer.parentQuesId);
                           }
@@ -565,18 +575,28 @@ export class EcdQuestionnaireComponent implements OnInit {
                           const indexToRemove = questionnaire.enabledQues.indexOf(answer.parentQuesId);
                           if (indexToRemove !== -1) { 
                             questionnaire.enabledQues.splice(indexToRemove, 1);
-                            questionnaire.answer = null;
+                            if(questionnaire.enabledQues.length <= 0){
+                              questionnaire.answer = null;
+                            }
+                            this.processFilteredQuestionnaires(questionnaire);
                           }                    
                         }
                   });
               } 
-            }else if((questionnaire.parentQuestionId === selectedAnsweredQues.questionid) && 
+            else if(questionnaire.parentQuestionId !== null && questionnaire.parentQuestionId.includes(selectedAnsweredQues.questionid) && 
                         (selectedAnsweredQues.answer == null)){ //|| !selectedAnsweredQues.answer.includes(questionnaire.parentAnswer))) {
-                          questionnaire.enabledQues = false;
-                          questionnaire.answer = null;
+                          questionnaire.parentAnswer.forEach((answer: any) => {
+                          const indexToRemove = questionnaire.enabledQues.indexOf(answer.parentQuesId);
+                          if (indexToRemove !== -1) { 
+                            questionnaire.enabledQues.splice(indexToRemove, 1);
+                            if(questionnaire.enabledQues.length <= 0){
+                              questionnaire.answer = null;
                           this.processFilteredQuestionnaires(questionnaire);
               }
-          //}
+          }
+        });
+        }
+      }
         });
       });
     }
