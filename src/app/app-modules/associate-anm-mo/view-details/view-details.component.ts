@@ -87,13 +87,13 @@ export class ViewDetailsComponent implements OnInit {
      private fb: FormBuilder,
      private datePipe: DatePipe
   ) { 
-    this.datePipeString = this.datePipe.transform(this.datePipeString,'dd/MM/yyyy');
+    this.datePipeString = this.datePipe.transform(this.datePipeString,'MM/dd/yyyy');
     console.log(this.datePipeString);
   }
 
   getmodifiedViewDetails(viewDetails:any){
     var modifiedObjForMother={
-      recordUploadDate:this.datePipe.transform(viewDetails.recordUploadDate,'dd/MM/yyyy'),
+      recordUploadDate:this.datePipe.transform(viewDetails.recordUploadDate,'MM/dd/yyyy'),
       motherId:viewDetails.mctsidNo,
       motherName:viewDetails.name,
       husbandName:viewDetails.husbandName,
@@ -104,13 +104,13 @@ export class ViewDetailsComponent implements OnInit {
       phoneNo:viewDetails.whomPhoneNo,
       Aasha:viewDetails.ashaName,
       anmName:viewDetails.anmName,
-      lmpDate:this.datePipe.transform(viewDetails.lmpDate,'dd/MM/yyyy'),
-      edd:this.datePipe.transform(viewDetails.edd,'dd/MM/yyyy'),
-      nextAnc:this.datePipe.transform(viewDetails.nextAnc,'dd/MM/yyyy'),
+      lmpDate:this.datePipe.transform(viewDetails.lmpDate,'MM/dd/yyyy'),
+      edd:this.datePipe.transform(viewDetails.edd,'MM/dd/yyyy'),
+      nextAnc:this.datePipe.transform(viewDetails.nextAnc,'MM/dd/yyyy'),
 
     }
     var modifiedObjForChild={
-      recordUploadDate:this.datePipe.transform(viewDetails.recordUploadDate,'dd/MM/yyyy'),
+      recordUploadDate:this.datePipe.transform(viewDetails.recordUploadDate,'MM/dd/yyyy'),
       childId:viewDetails.mctsidNoChildId,
       childName:viewDetails.childName,
       healthBlock:viewDetails.healthBlock,
@@ -120,7 +120,7 @@ export class ViewDetailsComponent implements OnInit {
       phoneNo:viewDetails.phoneNo,
       Aasha:viewDetails.ashaName,
       anmName:viewDetails.anmName,
-      nextPnc:this.datePipe.transform(viewDetails.nextPnc,'dd/MM/yyyy'),
+      nextPnc:this.datePipe.transform(viewDetails.nextPnc,'MM/dd/yyyy'),
     }
 
     if(this.data.activeMother){

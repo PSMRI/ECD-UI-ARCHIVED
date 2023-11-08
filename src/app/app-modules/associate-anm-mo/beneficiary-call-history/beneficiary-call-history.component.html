@@ -44,7 +44,7 @@
             <mat-expansion-panel *ngFor="let item of benHistoryData" (afterExpand)="getCallHistoryDetails(item.obCallId)">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  <b class="fontHeaderStyle">{{item.displayEcdCallType}}-{{item.lastModDate | date: 'dd/MM/yyyy'}}</b>
+                  <b class="fontHeaderStyle">{{item.displayEcdCallType}}-{{item.lastModDate | date: 'MM/dd/yyyy'}}</b>
                 </mat-panel-title>
               </mat-expansion-panel-header>
               <mat-panel-description>
@@ -208,7 +208,7 @@
                       matInput
                       placeholder=""
                       id="lmpDate"
-                      [value]="beneficiaryCallDetails.lmpDate | date: 'dd/MM/yyyy'"
+                      [value]="beneficiaryCallDetails.lmpDate | date: 'MM/dd/yyyy'"
                       appMobileNumber
                       type="text"
                       defaultNull
@@ -229,7 +229,7 @@
                       matInput
                       placeholder=""
                       id="dateOfBirth"
-                      [value]="beneficiaryCallDetails.dob |date: 'dd/MM/yyyy'"
+                      [value]="beneficiaryCallDetails.dob |date: 'MM/dd/yyyy'"
                       appMobileNumber
                       type="text"
                       defaultNull

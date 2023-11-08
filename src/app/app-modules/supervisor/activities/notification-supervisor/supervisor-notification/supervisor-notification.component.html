@@ -117,13 +117,13 @@
       <th mat-header-cell *matHeaderCellDef style="border-bottom: none">
         {{ currentLanguageSet?.validFrom }}
       </th>
-      <td mat-cell *matCellDef="let element" style="text-align: center !important;">{{ element.validFrom |utcdate| date: 'dd/MM/yyyy' }}</td>
+      <td mat-cell *matCellDef="let element" style="text-align: center !important;">{{ element.validFrom |utcdate| date: 'MM/dd/yyyy' }}</td>
     </ng-container>
     <ng-container matColumnDef="validTill">
       <th mat-header-cell *matHeaderCellDef style="border-bottom: none">
         {{ currentLanguageSet?.validTill }}
       </th>
-      <td mat-cell *matCellDef="let element" style="text-align: center !important;">{{ element.validTill |utcdate| date: 'dd/MM/yyyy' }}</td>
+      <td mat-cell *matCellDef="let element" style="text-align: center !important;">{{ element.validTill |utcdate| date: 'MM/dd/yyyy' }}</td>
     </ng-container>
     <!-- <ng-container matColumnDef="publish">
       <th mat-header-cell *matHeaderCellDef style="border-bottom: none">

@@ -215,8 +215,10 @@ export class SupervisorReportsComponent implements OnInit {
   downloadReport(report:any,formData:any){
       console.log(report)
     let reqObj = {
-      startDate:moment(formData.startDate).format('YYYY-MM-DDThh:mm:ssZ'),
-      endDate:moment(formData.endDate).format('YYYY-MM-DDThh:mm:ssZ'),
+      // startDate:moment(formData.startDate).format('YYYY-MM-DDThh:mm:ssZ'),
+      // endDate:moment(formData.endDate).format('YYYY-MM-DDThh:mm:ssZ'),
+      startDate: moment(formData.startDate).startOf('day').format('YYYY-MM-DDTHH:mm:ss'),
+      endDate: moment(formData.endDate).endOf('day').format('YYYY-MM-DDTHH:mm:ss'),
       role:formData.roleName,
       agentId:(formData.agentId !== undefined) ? formData.agentId : null,
       fileName:report.value,
