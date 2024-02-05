@@ -149,14 +149,14 @@ export class LoginComponent implements OnInit {
 
   loginForm = this.fb.group({
     userName: [''],
-    code: [''],
+    password: [''],
   });
 
   /**
    * Calling user authentication API
    */
   public onSubmit(): void {
-   let encryptedPwd = this.encrypt(this.Key_IV, this.loginForm.controls.code.value)
+   let encryptedPwd = this.encrypt(this.Key_IV, this.loginForm.controls.password.value)
     let reqObj = {
       userName: this.loginForm.controls.userName.value,
       password: encryptedPwd,
@@ -209,7 +209,7 @@ export class LoginComponent implements OnInit {
             .userLogoutPreviousSession(this.loginForm.controls.userName.value)
             .subscribe((logOutFromPreviousSession: any) => {
               if (logOutFromPreviousSession.statusCode === 200) {
-                let encryptedPwd = this.encrypt(this.Key_IV, this.loginForm.controls.code.value)
+                let encryptedPwd = this.encrypt(this.Key_IV, this.loginForm.controls.password.value)
                 let loginReqObj = {
                   userName: this.loginForm.controls.userName.value,
                   password: encryptedPwd,
@@ -310,7 +310,7 @@ export class LoginComponent implements OnInit {
          */
 
 
-         this.ctiService.getCTILoginToken(this.loginForm.controls.userName.value, this.loginForm.controls.code.value).subscribe((response:any) => {
+         this.ctiService.getCTILoginToken(this.loginForm.controls.userName.value, this.loginForm.controls.password.value).subscribe((response:any) => {
           if(response && response.data) {
           this.loginService.loginKey = response.data.login_key;
           }
