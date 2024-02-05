@@ -45,7 +45,7 @@
                 matInput
                 [type]="hide ? 'password' : 'text'"
                 placeholder=""
-                formControlName="code"
+                formControlName="password"
                 id="password"
               />
               <button
@@ -78,9 +78,9 @@
                   loginForm.controls.userName.value !== undefined &&
                   loginForm.controls.userName.value !== null &&
                   loginForm.controls.userName.value !== '' &&
-                  loginForm.controls.code.value !== undefined &&
-                  loginForm.controls.code.value !== null &&
-                  loginForm.controls.code.value !== ''
+                  loginForm.controls.password.value !== undefined &&
+                  loginForm.controls.password.value !== null &&
+                  loginForm.controls.password.value !== ''
                 )
               "
               type="submit"
