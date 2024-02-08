@@ -49,9 +49,18 @@ To install the ECD module, please follow these steps:
    - Run the command `npm start`.
 3. Open your browser and access `http://localhost:4200/#/login` to view the login page of module.
 
-## Configuration
-The ECD module can be configured by editing the config.js file. This file contains all of the settings for the module, such as the database connection string, the user authentication mechanism, and the role hierarchy.
+## Building war files
 
+To build deployable war files
+```bash
+mvn -B package --file pom.xml -P <profile_name>
+```
+
+The available profiles include dev, local, test, and ci.
+Refer to `src/environments/environment.ci.template` file and ensure that the right environment variables are set for the build.
+
+Packing with `ci` profile calls `build-ci` script in `package.json`.
+It creates a `environment.ci.ts` file with all environment variables used in the generated build.
 
 ## Usage
 
