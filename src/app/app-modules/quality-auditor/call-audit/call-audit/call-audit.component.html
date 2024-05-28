@@ -73,7 +73,7 @@
       </mat-radio-group>
 
       <button mat-raised-button class="buttonColor full-width buttonWidth" type="submit" 
-      [disabled]="!cycleWiseForm.valid" (click)="getQualityAudiotorWorklist()" >{{currentLanguageSet?.search}}
+      [disabled]="!cycleWiseForm.valid" (click)="onSearchClicked()" >{{currentLanguageSet?.search}}
       </button>
       
   </form>
@@ -165,7 +165,7 @@
     <mat-label style="margin-right: 10px;" class="fontStyle">{{ currentLanguageSet?.inValidCall }}</mat-label> -->
 
     <button mat-raised-button class="buttonColor full-width buttonWidth" type="submit" 
-    [disabled]="!dateWiseForm.valid" (click)="getQualityAudiotorWorklist()" >{{currentLanguageSet?.search}}
+    [disabled]="!dateWiseForm.valid" (click)="onSearchClicked()" >{{currentLanguageSet?.search}}
     </button>
 </form>
 
@@ -358,7 +358,7 @@
 </div>
   <mat-paginator
   [hidden]="callAuditData.data.length === 0"
-    #myPaginator
+  [length]="callAuditData.data.length"
     [pageSizeOptions]="[5, 10, 20]"
     [pageSize]="5"
     showFirstLastButtons
