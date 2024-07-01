@@ -1,3 +1,7 @@
+# ❗❗❗ NOTICE ❗❗❗
+
+A new version of the repository is available here [PSMRI/ECD-UI](https://github.com/PSMRI/ECD-UI)
+
 # AMRIT - Early Childhood Developemnt (ECD) Service
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
